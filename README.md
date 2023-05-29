@@ -15,5 +15,6 @@ The urlpatterns list contains the URLs that map the views to their appropriate U
 In summary, this project offers users a method to log in using their Google accounts and retrieve their calendar events using the Google Calendar API inside of a Django web application.
 
 
-![image](https://github.com/aryan-vigyat2001/Assignment/assets/88244719/4c8cb4c1-12b0-439e-8f22-4f347ead7e81)
+![image](https://github.com/aryan-vigyat2001/Assignment/assets/88244719/01f10e37-4f03-43d6-91dc-682546611a93)
+
 
