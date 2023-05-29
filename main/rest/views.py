@@ -19,7 +19,7 @@ scopes=['https://www.googleapis.com/auth/calendar.events']
 class GoogleCalendarInitView(View):
     def get(self,request,*args,**kwargs):
         flow=Flow.from_client_secrets_file(
-        'main/credentials/client_secret.json',
+        'secret.json',
         scopes=scopes)
         flow.redirect_uri = 'http://localhost:8000/rest/v1/calendar/redirect'
         authorization_url, state = flow.authorization_url(
@@ -42,7 +42,7 @@ def GoogleCalendarRedirectView(request):
 
     # Create a Flow object using the client secrets file and use the scopes defined above
     flow = Flow.from_client_secrets_file(
-        'main/credentials/client_secret.json',
+        'secret.json',
         scopes=scopes
     )
     flow.redirect_uri = 'http://localhost:8000/rest/v1/calendar/redirect'
@@ -50,8 +50,14 @@ def GoogleCalendarRedirectView(request):
 
     # Store the credentials in the session or database for later use
     credentials = flow.credentials
-    request.session['authenticated_credentials'] = credentials.to_json()
-
+    request.session['authenticated_credentials'] =  {
+            'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes
+        }
     return redirect('http://localhost:8000/rest/v1/calendar/events')
 
 @api_view(['GET'])
@@ -61,14 +67,15 @@ def GoogleCalendarEventsView(request):
     credentials_json = request.session.get('authenticated_credentials', '')
     if not credentials_json:
         return JsonResponse({'error': 'Credentials mismatch is seen.'})
-    credentials = google.oauth2.credentials.Credentials.from_json(credentials_json)
+    credentials = google.oauth2.credentials.Credentials(
+        **request.session['authenticated_credentials'])
      # Create the Calendar API service using the credentials
     service = googleapiclient.discovery.build(API,API_VERSION, credentials=credentials)
     timeMin = '2023-01-01T00:00:00-09:00'
     events_store = service.events().list(calendarId='primary',timeMin=timeMin,
                                               maxResults=10).execute()
     events = events_store.get('items', [])
-    return JsonResponse({'status': 'success',
+    return Response({'status': 'success',
                          'response_code':200,
                              'message': 'These are the Events',
                              'data': events

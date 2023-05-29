@@ -3,7 +3,7 @@ from .views import GoogleCalendarInitView, GoogleCalendarRedirectView, GoogleCal
 
 
 urlpatterns = [
-    path('rest/v1/calendar/init/', GoogleCalendarInitView.as_view(), name='calendar_init'),
-    path('rest/v1/calendar/redirect/', GoogleCalendarRedirectView, name='calendar_redirect'),
-    path('rest/v1/calendar/events/', GoogleCalendarEventsView, name='calendar_events'),
+    path('v1/calendar/init/', GoogleCalendarInitView.as_view(), name='calendar_init'),
+    path('v1/calendar/redirect/', GoogleCalendarRedirectView, name='calendar_redirect'),
+    path('v1/calendar/events/', GoogleCalendarEventsView, name='calendar_events'),
 ]
